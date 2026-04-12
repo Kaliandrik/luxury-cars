@@ -1059,3 +1059,183 @@
   .loading-speedo { width: 220px; }
   .loading-bar-wrapper { width: 190px; }
 }
+
+/* ─────────────────────────────────────────
+   PERFIL DE USO
+───────────────────────────────────────── */
+.perfil-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.perfil-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.2s;
+}
+
+.perfil-card:hover {
+  border-color: rgba(255,255,255,0.13);
+}
+
+.perfil-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.perfil-card-img {
+  width: 70px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  flex-shrink: 0;
+}
+
+.perfil-card-brand {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 2px;
+}
+
+.perfil-card-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  line-height: 1;
+}
+
+.perfil-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.perfil-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 7px 12px;
+}
+
+.perfil-badge-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.perfil-badge-label {
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ─────────────────────────────────────────
+   CUSTO DE MANUTENÇÃO
+───────────────────────────────────────── */
+.manut-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.manut-card {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.manut-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.manut-card-brand {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 2px;
+}
+
+.manut-card-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  line-height: 1;
+}
+
+.manut-card-nivel {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.manut-card-detalhe {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVO — perfil e manutenção
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .perfil-grid,
+  .manut-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .perfil-badges {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .perfil-badge {
+    flex: 1 1 calc(50% - 4px);
+  }
+}
+
+@media (max-width: 480px) {
+  .perfil-badge {
+    flex: 1 1 100%;
+  }
+
+  .manut-card-top {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .manut-card-nivel {
+    text-align: left;
+  }
+}
+

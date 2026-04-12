@@ -8,6 +8,15 @@ export const cars = [
     color: "#c8a96e",
     image: "/imagens/corolla.png",
     video: "/videoscarros/videocorolla.mp4",
+    manutencao: {
+      nivel: "medio",
+      label: "Médio",
+      detalhe: "Peças originais Toyota têm custo elevado, mas a durabilidade compensa no longo prazo.",
+    },
+    perfil: [
+      { icone: "🛣️", label: "Melhor para estrada" },
+      { icone: "👨‍👩‍👧", label: "Melhor para família" },
+    ],
     vendas: {
       total: 1500000,
       porAno: [
@@ -42,6 +51,15 @@ export const cars = [
     color: "#0072ff",
     image: "/imagens/onix.png",
     video: "/videoscarros/videoonix.mp4",
+    manutencao: {
+      nivel: "baixo",
+      label: "Baixo",
+      detalhe: "Rede de assistência ampla e peças acessíveis fazem do Onix um dos mais baratos para manter.",
+    },
+    perfil: [
+      { icone: "🏙️", label: "Melhor para cidade" },
+      { icone: "💸", label: "Melhor custo-benefício" },
+    ],
     vendas: {
       total: 2500000,
       porAno: [
@@ -76,6 +94,15 @@ export const cars = [
     color: "#ff3a3a",
     image: "/imagens/celta.png",
     video: null,
+    manutencao: {
+      nivel: "baixo",
+      label: "Baixo",
+      detalhe: "Um dos carros mais baratos para manter no Brasil. Peças simples e mecânicos especializados em todo lugar.",
+    },
+    perfil: [
+      { icone: "💸", label: "Melhor primeiro carro" },
+      { icone: "🏙️", label: "Melhor para cidade" },
+    ],
     vendas: {
       total: 1500000,
       porAno: [
@@ -101,4 +128,4 @@ export const cars = [
       consumo_estrada: "13,5 km/L",
     },
   },
-];
+]
