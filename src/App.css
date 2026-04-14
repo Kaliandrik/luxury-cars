@@ -1,4 +1,13 @@
 /* ─────────────────────────────────────────
+   VARIÁVEIS GLOBAIS
+───────────────────────────────────────── */
+:root {
+  --transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* ─────────────────────────────────────────
    LAYOUT BASE
 ───────────────────────────────────────── */
 .showcase,
@@ -293,47 +302,86 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 100;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
   outline: none;
   cursor: pointer;
-  color: rgba(255,255,255,0.45);
-  padding: 12px;
-  border-radius: 50%;
-  transition: color 0.2s, background 0.2s, transform 0.2s;
+  color: rgba(255,255,255,0.65);
+  padding: 14px;
+  border-radius: 60px;
   line-height: 0;
-  backdrop-filter: blur(4px);
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .nav-btn:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.1);
-  transform: translateY(-50%) scale(1.12);
+  background: rgba(20, 20, 20, 0.85);
+  border-color: rgba(255,255,255,0.25);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  color: white;
+  transform: translateY(-50%) scale(1.08);
 }
 
-.nav-btn:active { transform: translateY(-50%) scale(0.95); }
-.nav-btn.left  { left: 28px; }
-.nav-btn.right { right: 28px; }
+.nav-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.nav-btn.left {
+  left: 28px;
+}
+
+.nav-btn.right {
+  right: 28px;
+}
+
+.nav-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.nav-btn.left:hover svg {
+  transform: translateX(-2px) scale(1.1);
+}
+
+.nav-btn.right:hover svg {
+  transform: translateX(2px) scale(1.1);
+}
 
 /* dots */
 .dots {
   position: absolute;
-  bottom: 20px;
+  bottom: 1px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   z-index: 100;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 60px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .dot {
-  height: 2px;
-  border-radius: 99px;
+  height: 3px;
+  border-radius: 4px;
   border: none;
   outline: none;
   cursor: pointer;
-  transition: width 0.5s, background-color 0.5s;
+  transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), background 0.3s ease;
+  transform-origin: left;
+}
+
+.dot:hover {
+  transform: scaleY(1.8);
+  background: rgba(255,255,255,0.5) !important;
 }
 
 /* ─────────────────────────────────────────
@@ -348,6 +396,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  perspective: 800px;
 }
 
 .car-motion {
@@ -357,23 +406,31 @@
   justify-content: center;
   width: 100%;
   position: relative;
+  animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+}
+
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(25px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .car-name-bg {
   position: absolute;
-  top: 50%;
+  top: 38%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(60px, 16vw, 180px);
+  font-size: clamp(70px, 18vw, 200px);
   font-weight: 900;
   font-style: italic;
-  letter-spacing: -6px;
+  letter-spacing: -8px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.045);
   white-space: nowrap;
   user-select: none;
   pointer-events: none;
   z-index: 0;
+  filter: blur(0.5px);
+  transition: opacity 0.4s ease;
 }
 
 .car-img-wrapper {
@@ -385,6 +442,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible;
+  filter: drop-shadow(0 30px 35px rgba(0,0,0,0.5));
+  transition: filter 0.4s ease;
 }
 
 .car-img {
@@ -393,12 +453,20 @@
   max-height: 320px;
   object-fit: contain;
   filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8));
+  position: relative;
+  z-index: 10;
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  will-change: transform;
+}
+
+.car-img:hover {
+  transform: scale(1.02);
 }
 
 .car-info {
   position: relative;
   z-index: 20;
-  margin-top: 1.2rem;
+  margin-top: -1rem;
   text-align: center;
   padding: 0 1.5rem;
 }
@@ -417,23 +485,36 @@
   text-transform: uppercase;
   font-style: italic;
   line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .car-divider {
-  width: 36px;
-  height: 1px;
+  width: 48px;
+  height: 2px;
   margin: 0.8rem auto;
-  opacity: 0.4;
+  background: linear-gradient(90deg, var(--car-color, rgba(255,255,255,0.4)), rgba(255,255,255,0.1));
+  border-radius: 2px;
+  opacity: 0.7;
 }
 
 .car-desc {
-  color: rgba(255,255,255,0.38);
+  color: rgba(255,255,255,0.48);
   font-size: 0.78rem;
   font-weight: 300;
   max-width: 340px;
   margin: 0 auto;
   line-height: 1.8;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  padding: 8px 16px;
+  border-radius: 40px;
+  display: inline-block;
 }
+
 
 /* ─────────────────────────────────────────
    FUNDO SEM VÍDEO (Celta)
@@ -1239,3 +1320,507 @@
   }
 }
 
+/* ─────────────────────────────────────────
+   MINIATURAS DOS CARROS (canto inferior esquerdo)
+───────────────────────────────────────── */
+/* MINIATURAS DOS CARROS (canto inferior esquerdo) */
+.car-thumbnails {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+}
+
+.car-thumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(8, 8, 8, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 48px;
+  padding: 4px 12px 4px 6px;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  width: auto;
+  min-width: 110px;
+}
+
+.car-thumb:hover {
+  background: rgba(20, 20, 20, 0.85);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-5px) scale(1.02);
+}
+
+.car-thumb img {
+  width: 42px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  border-radius: 6px;
+}
+
+.car-thumb:hover img {
+  transform: scale(1.05);
+}
+
+.car-thumb span {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.car-thumb--active {
+  background: rgba(30, 30, 40, 0.9);
+  border-left-width: 3px;
+  border-left-color: var(--car-color, rgba(255,255,255,0.3));
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* esconde miniaturas no mobile pra não poluir */
+@media (max-width: 768px) {
+  .car-thumbnails { display: none; }
+}
+
+/* Cantos decorativos da loading screen */
+.loading-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.loading-corner {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+}
+
+.loading-corner--tl {
+  top: 28px;
+  left: 28px;
+  border-top: 2px solid rgba(255,255,255,0.2);
+  border-left: 2px solid rgba(255,255,255,0.2);
+}
+
+.loading-corner--tr {
+  top: 28px;
+  right: 28px;
+  border-top: 2px solid rgba(255,255,255,0.2);
+  border-right: 2px solid rgba(255,255,255,0.2);
+}
+
+.loading-corner--bl {
+  bottom: 28px;
+  left: 28px;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+  border-left: 2px solid rgba(255,255,255,0.2);
+}
+
+.loading-corner--br {
+  bottom: 28px;
+  right: 28px;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+  border-right: 2px solid rgba(255,255,255,0.2);
+}
+
+/* Responsivo: cantos menores em telas pequenas */
+@media (max-width: 480px) {
+  .loading-corner {
+    width: 32px;
+    height: 32px;
+  }
+  .loading-corner--tl,
+  .loading-corner--tr {
+    top: 16px;
+  }
+  .loading-corner--tl,
+  .loading-corner--bl {
+    left: 16px;
+  }
+  .loading-corner--tr,
+  .loading-corner--br {
+    right: 16px;
+  }
+  .loading-corner--bl,
+  .loading-corner--br {
+    bottom: 16px;
+  }
+}
+
+/* ─────────────────────────────────────────
+   OTIMIZAÇÃO DE ANIMAÇÕES
+───────────────────────────────────────── */
+.car-display,
+.car-motion,
+.car-img,
+.car-info,
+.car-title,
+.car-desc,
+.car-meta {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.car-motion {
+  position: relative;
+  width: 100%;
+}
+
+/* Remove a animação CSS de fadeSlideUp que conflita com o framer-motion */
+.car-motion {
+  animation: none !important;
+}
+
+/* Suaviza a troca de opacidade do overlay de cor */
+.overlay-color {
+  transition: background 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
+  will-change: background;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVIDADE REFINADA (ADICIONAR AO FINAL)
+───────────────────────────────────────── */
+
+/* Telas muito pequenas (≤ 480px) - melhorias pontuais */
+@media (max-width: 480px) {
+  /* Ajusta o container dos specs para não quebrar */
+  .car-display .car-motion > div:first-child {
+    gap: 1rem !important;
+    padding: 0.4rem 1rem !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  /* Cada spec fica menor e com margem */
+  .car-display .car-motion > div:first-child > div {
+    min-width: 70px;
+  }
+
+  /* Tamanho da fonte dos valores dos specs */
+  .car-display .car-motion > div:first-child span:first-child {
+    font-size: 0.8rem !important;
+  }
+
+  /* Descrição do carro mais compacta */
+  .car-desc {
+    font-size: 0.65rem !important;
+    padding: 6px 12px !important;
+    max-width: 90% !important;
+  }
+
+  /* Dots mais próximo do footer */
+  .dots {
+    bottom: 8px !important;
+    padding: 4px 12px !important;
+    gap: 8px !important;
+  }
+
+  /* Aumenta área de toque dos dots */
+  .dot {
+    height: 4px !important;
+    min-width: 8px;
+  }
+
+  /* Setas laterais menores e mais próximas */
+  .nav-btn {
+    padding: 8px !important;
+  }
+  .nav-btn.left {
+    left: 4px !important;
+  }
+  .nav-btn.right {
+    right: 4px !important;
+  }
+
+  /* Header mais compacto ainda */
+  .header {
+    padding: 0 12px !important;
+    height: 48px !important;
+  }
+  .header-logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .header-title {
+    font-size: 0.55rem !important;
+    letter-spacing: 1px !important;
+  }
+  .header-subtitle {
+    display: none;
+  }
+
+  /* Footer mais enxuto */
+  .footer {
+    padding: 0 12px !important;
+    height: 36px !important;
+  }
+  .footer-text, .footer-label {
+    font-size: 0.5rem !important;
+    letter-spacing: 1px !important;
+  }
+  .footer-left .footer-text {
+    display: inline-block !important; /* reaparece se quiser, mas pode manter none */
+  }
+  .footer-right {
+    display: flex !important;
+    gap: 2px;
+  }
+  .footer-bar {
+    width: 16px;
+  }
+}
+
+/* Telas entre 481px e 640px (celulares maiores) */
+@media (min-width: 481px) and (max-width: 640px) {
+  .car-img {
+    max-height: 260px !important;
+  }
+  .car-img-wrapper {
+    padding: 0 2rem !important;
+  }
+  .car-title {
+    font-size: clamp(2rem, 8vw, 2.8rem) !important;
+  }
+  .car-desc {
+    max-width: 300px !important;
+    font-size: 0.72rem !important;
+  }
+  .nav-btn {
+    padding: 10px !important;
+  }
+  .nav-btn.left {
+    left: 12px !important;
+  }
+  .nav-btn.right {
+    right: 12px !important;
+  }
+}
+
+/* Telas muito pequenas (≤ 360px) - ajustes extremos */
+@media (max-width: 360px) {
+  .car-img {
+    max-height: 150px !important;
+  }
+  .car-img-wrapper {
+    padding: 0 1.5rem !important;
+  }
+  .car-title {
+    font-size: 1.6rem !important;
+  }
+  .car-meta {
+    font-size: 0.55rem !important;
+    letter-spacing: 2px !important;
+  }
+  .car-desc {
+    font-size: 0.6rem !important;
+    padding: 4px 10px !important;
+  }
+  .dots {
+    gap: 6px !important;
+    padding: 4px 8px !important;
+    bottom: 4px !important;
+  }
+  .dot {
+    height: 3px !important;
+  }
+  .nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .loading-speedo {
+    width: 180px !important;
+  }
+}
+
+/* Ajuste para landscape (orientação paisagem) em celulares */
+@media (max-height: 500px) and (orientation: landscape) {
+  .car-img {
+    max-height: 140px !important;
+  }
+  .car-info {
+    margin-top: 0 !important;
+  }
+  .car-desc {
+    display: none; /* esconde descrição para não poluir */
+  }
+  .car-motion > div:first-child {
+    margin-bottom: 0 !important;
+    padding: 0.2rem 1rem !important;
+  }
+  .dots {
+    bottom: 4px !important;
+  }
+  .footer {
+    height: 32px !important;
+  }
+  .header {
+    height: 44px !important;
+  }
+}
+
+/* ─────────────────────────────────────────
+   MELHORIAS VISUAIS PARA A PÁGINA COMPARAR
+───────────────────────────────────────── */
+
+/* Efeito de brilho nos cards ao hover */
+.compare-card {
+  transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s ease;
+}
+.compare-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5);
+}
+.compare-card--active {
+  box-shadow: 0 0 0 1px var(--car-color), 0 20px 30px -12px rgba(0,0,0,0.6);
+}
+
+/* Barras de progresso com gradiente e glow */
+.compare-card-bar-fill {
+  background: linear-gradient(90deg, var(--car-color), rgba(255,255,255,0.6));
+  box-shadow: 0 0 4px var(--car-color);
+}
+.year-bar-fill {
+  background: linear-gradient(180deg, var(--car-color), rgba(255,255,255,0.4));
+  box-shadow: 0 0 3px var(--car-color);
+}
+
+/* Cards de perfil com efeito de elevação */
+.perfil-card {
+  transition: transform 0.25s ease, border-color 0.2s;
+}
+.perfil-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.15);
+}
+.perfil-badge {
+  transition: all 0.2s ease;
+}
+.perfil-badge:hover {
+  transform: scale(1.02);
+  background: rgba(255,255,255,0.08);
+}
+
+/* Cards de manutenção com brilho na borda ao hover */
+.manut-card {
+  transition: transform 0.25s ease, box-shadow 0.3s;
+}
+.manut-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.manut-card-nivel {
+  font-weight: 800;
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* Gráfico anual – barras com animação de crescimento mais suave */
+.year-bar-fill {
+  transition: height 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* Melhorias visuais para a página Comparar */
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.compare-card, .perfil-card, .manut-card {
+  transition: transform 0.25s ease, box-shadow 0.3s;
+}
+.compare-card:hover, .perfil-card:hover, .manut-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -12px rgba(0,0,0,0.5);
+}
+.compare-card--active {
+  box-shadow: 0 0 0 1px var(--car-color), 0 12px 24px -12px rgba(0,0,0,0.6);
+}
+.compare-card-bar-fill, .year-bar-fill {
+  box-shadow: 0 0 6px var(--car-color);
+}
+
+/* Melhorias visuais para a página Ficha Técnica */
+.ficha-tab {
+  transition: transform 0.2s ease, background 0.2s, border-color 0.2s;
+}
+.ficha-tab:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+}
+.ficha-tab--active {
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 12px -4px var(--car-color);
+}
+.ficha-item {
+  transition: background 0.2s ease, transform 0.2s;
+}
+.ficha-item:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateX(4px);
+}
+.ficha-hero-img {
+  transition: filter 0.3s, transform 0.3s;
+}
+.ficha-hero-img:hover {
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+  transform: scale(1.02);
+}
+
+/* Cursor personalizado */
+* {
+  cursor: none !important;
+}
+
+/* Em dispositivos touch, desativa o cursor customizado */
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* Garante que links e botões continuem com pointer-events normais */
+a, button, .nav-btn, .dot, .car-thumb, .compare-card, .ficha-tab, .perfil-card, .manut-card {
+  cursor: none;
+}
+/* Garante que a área principal de rolagem ocupe toda a altura e não tenha bloqueios */
+.page-main {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+  scroll-behavior: smooth;
+}
+
+/* Remove qualquer pointer-events que possa bloquear a rolagem */
+.page-bg,
+.overlay-color {
+  pointer-events: none !important;
+}
+
+/* Garante que o wrapper do conteúdo não interfira na rolagem */
+.compare-wrapper {
+  position: relative;
+  z-index: 20;
+  pointer-events: auto; /* Garante que o conteúdo seja clicável */
+}
+
+/* Se houver algum elemento fixo ou absoluto que esteja bloqueando, desative os pointer-events */
+.compare-wrapper::before,
+.compare-wrapper::after {
+  pointer-events: none;
+}

@@ -27,7 +27,7 @@ const Header = () => {
           </div>
           <div>
             <div className="header-title">Carros Populares Brasil</div>
-            <div className="header-subtitle">Showcase · {new Date().getFullYear()}</div>
+            <div className="header-subtitle">Kaliandrik · {new Date().getFullYear()}</div>
           </div>
         </div>
 

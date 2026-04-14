@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Comparar from './pages/Comparar'
 import FichaTecnica from './pages/FichaTecnica'
 import LoadingScreen from './components/LoadingScreen'
+import CustomCursor from './components/CustomCursor'   // ← adicionado
 import './App.css'
 
 function App() {
@@ -12,6 +13,9 @@ function App() {
 
   return (
     <>
+      {/* Cursor personalizado sempre visível (até mesmo sobre a loading screen) */}
+      <CustomCursor />
+
       <AnimatePresence>
         {!loaded && (
           <LoadingScreen onComplete={() => setLoaded(true)} />

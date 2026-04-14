@@ -7,7 +7,6 @@ const LoadingScreen = ({ onComplete }) => {
   const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
-    // Simula carregamento progressivo em ~2.8s
     const steps = [
       { delay: 0,    spd: 0,   pct: 0   },
       { delay: 200,  spd: 40,  pct: 15  },
@@ -25,7 +24,6 @@ const LoadingScreen = ({ onComplete }) => {
       }, delay)
     )
 
-    // Dispara saída após chegar a 100%
     const exitTimer = setTimeout(() => {
       setLeaving(true)
       setTimeout(onComplete, 600)
@@ -37,29 +35,34 @@ const LoadingScreen = ({ onComplete }) => {
     }
   }, [onComplete])
 
-  // Converte velocidade (0–240) para ângulo do ponteiro (-130° a +130°)
+  // Geometria do velocímetro (igual ao original)
   const maxSpeed = 240
   const minAngle = -130
   const maxAngle = 130
   const needleAngle = minAngle + (speed / maxSpeed) * (maxAngle - minAngle)
 
-  // Arco do velocímetro
   const cx = 150
   const cy = 150
   const r = 110
   const toRad = (deg) => (deg * Math.PI) / 180
-  const arcStart = { x: cx + r * Math.cos(toRad(minAngle - 90)), y: cy + r * Math.sin(toRad(minAngle - 90)) }
-  const arcEnd   = { x: cx + r * Math.cos(toRad(maxAngle - 90)), y: cy + r * Math.sin(toRad(maxAngle - 90)) }
 
-  // Arco de progresso colorido
+  const arcStart = {
+    x: cx + r * Math.cos(toRad(minAngle - 90)),
+    y: cy + r * Math.sin(toRad(minAngle - 90))
+  }
+  const arcEnd = {
+    x: cx + r * Math.cos(toRad(maxAngle - 90)),
+    y: cy + r * Math.sin(toRad(maxAngle - 90))
+  }
+
   const progressAngle = minAngle + (speed / maxSpeed) * (maxAngle - minAngle)
   const progEnd = {
     x: cx + r * Math.cos(toRad(progressAngle - 90)),
-    y: cy + r * Math.sin(toRad(progressAngle - 90)),
+    y: cy + r * Math.sin(toRad(progressAngle - 90))
   }
   const largeArc = progressAngle - minAngle > 180 ? 1 : 0
 
-  // Marcações do velocímetro
+  // Marcações
   const ticks = []
   for (let i = 0; i <= 24; i++) {
     const angle = minAngle + (i / 24) * (maxAngle - minAngle)
@@ -89,18 +92,33 @@ const LoadingScreen = ({ onComplete }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
         >
-          {/* grade de fundo */}
+          {/* Grade de fundo (já existe no CSS) */}
           <div className="loading-grid" />
 
-          {/* luz central suave */}
+          {/* Luz radial que acompanha a cor do velocímetro */}
           <div
             className="loading-glow"
-            style={{ background: `radial-gradient(ellipse at center, ${color}18 0%, transparent 65%)`, transition: 'background 0.8s ease' }}
+            style={{
+              background: `radial-gradient(ellipse at center, ${color}20 0%, transparent 70%)`,
+              transition: 'background 0.5s ease'
+            }}
           />
 
-          <div className="loading-content">
+          {/* Cantos decorativos animados (novos) */}
+          <div className="loading-corners">
+            {['tl', 'tr', 'bl', 'br'].map((pos, i) => (
+              <motion.div
+                key={pos}
+                className={`loading-corner loading-corner--${pos}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 + i * 0.1, duration: 0.4 }}
+              />
+            ))}
+          </div>
 
-            {/* título */}
+          <div className="loading-content">
+            {/* Título com gradiente */}
             <motion.div
               className="loading-brand"
               initial={{ opacity: 0, y: -12 }}
@@ -110,18 +128,27 @@ const LoadingScreen = ({ onComplete }) => {
               <span className="loading-brand-tag">Carros Populares Brasil</span>
             </motion.div>
 
-            {/* velocímetro SVG */}
+            {/* Velocímetro SVG (igual ao original, mas com pequenos toques visuais) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.2, type: 'spring', stiffness: 120 }}
             >
               <svg
                 viewBox="0 0 300 220"
                 className="loading-speedo"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                {/* arco base (cinza) */}
+                {/* Sombra suave no arco base */}
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+
+                {/* Arco base (fundo) */}
                 <path
                   d={`M ${arcStart.x} ${arcStart.y} A ${r} ${r} 0 1 1 ${arcEnd.x} ${arcEnd.y}`}
                   fill="none"
@@ -130,17 +157,17 @@ const LoadingScreen = ({ onComplete }) => {
                   strokeLinecap="round"
                 />
 
-                {/* arco de progresso colorido */}
+                {/* Arco de progresso colorido com glow */}
                 <motion.path
                   d={`M ${arcStart.x} ${arcStart.y} A ${r} ${r} 0 ${largeArc} 1 ${progEnd.x} ${progEnd.y}`}
                   fill="none"
                   stroke={color}
                   strokeWidth="6"
                   strokeLinecap="round"
-                  style={{ filter: `drop-shadow(0 0 6px ${color})`, transition: 'stroke 0.5s ease' }}
+                  style={{ filter: `url(#glow)`, transition: 'stroke 0.5s ease' }}
                 />
 
-                {/* marcações */}
+                {/* Marcações */}
                 {ticks.map((t, i) => (
                   <line
                     key={i}
@@ -149,12 +176,12 @@ const LoadingScreen = ({ onComplete }) => {
                     stroke={t.angle <= needleAngle ? color : 'rgba(255,255,255,0.15)'}
                     strokeWidth={t.major ? 2 : 1}
                     strokeLinecap="round"
-                    style={{ transition: 'stroke 0.4s ease' }}
+                    style={{ transition: 'stroke 0.3s ease' }}
                   />
                 ))}
 
-                {/* números das marcações maiores */}
-                {ticks.filter((t) => t.major).map((t, i) => {
+                {/* Números das marcações principais */}
+                {ticks.filter(t => t.major).map((t, i) => {
                   const labelR = r - 30
                   const rad = toRad(t.angle - 90)
                   return (
@@ -164,30 +191,31 @@ const LoadingScreen = ({ onComplete }) => {
                       y={cy + labelR * Math.sin(rad)}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fill="rgba(255,255,255,0.25)"
+                      fill="rgba(255,255,255,0.28)"
                       fontSize="9"
                       fontFamily="monospace"
+                      fontWeight="bold"
                     >
                       {t.speed}
                     </text>
                   )
                 })}
 
-                {/* ponteiro */}
+                {/* Ponteiro com animação spring */}
                 <motion.g
                   style={{ transformOrigin: `${cx}px ${cy}px` }}
                   animate={{ rotate: needleAngle }}
-                  transition={{ type: 'spring', stiffness: 60, damping: 18 }}
+                  transition={{ type: 'spring', stiffness: 70, damping: 18 }}
                 >
-                  {/* sombra do ponteiro */}
+                  {/* Sombra do ponteiro */}
                   <line
                     x1={cx} y1={cy + 14}
                     x2={cx} y2={cy - r + 22}
-                    stroke="rgba(0,0,0,0.4)"
-                    strokeWidth="4"
+                    stroke="rgba(0,0,0,0.5)"
+                    strokeWidth="5"
                     strokeLinecap="round"
                   />
-                  {/* ponteiro */}
+                  {/* Ponteiro principal com glow */}
                   <line
                     x1={cx} y1={cy + 14}
                     x2={cx} y2={cy - r + 22}
@@ -196,42 +224,49 @@ const LoadingScreen = ({ onComplete }) => {
                     strokeLinecap="round"
                     style={{ filter: `drop-shadow(0 0 4px ${color})`, transition: 'stroke 0.5s ease' }}
                   />
+                  {/* Detalhe ponta do ponteiro */}
+                  <circle cx={cx} cy={cy - r + 22} r="2.5" fill="#fff" opacity="0.7" />
                 </motion.g>
 
-                {/* centro do ponteiro */}
-                <circle cx={cx} cy={cy} r="8" fill="#111" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
-                <circle cx={cx} cy={cy} r="3" fill={color} style={{ transition: 'fill 0.5s ease' }} />
+                {/* Centro do ponteiro (camadas) */}
+                <circle cx={cx} cy={cy} r="10" fill="#0a0a0a" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                <circle cx={cx} cy={cy} r="6" fill="#111" stroke={`${color}66`} strokeWidth="1" />
+                <circle cx={cx} cy={cy} r="3" fill={color} style={{ filter: `drop-shadow(0 0 6px ${color})` }} />
 
-                {/* velocidade digital */}
+                {/* Velocidade digital com leve pulsação */}
                 <text
                   x={cx} y={cy + 38}
                   textAnchor="middle"
-                  fill="rgba(255,255,255,0.9)"
+                  fill="rgba(255,255,255,0.95)"
                   fontSize="28"
-                  fontWeight="700"
+                  fontWeight="800"
                   fontFamily="monospace"
+                  style={{ textShadow: `0 0 6px ${color}80` }}
                 >
                   <motion.tspan
-                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 1.2, repeat: Infinity }}
                   >
                     {speed}
                   </motion.tspan>
                 </text>
+
+                {/* Label KM/H */}
                 <text
                   x={cx} y={cy + 52}
                   textAnchor="middle"
-                  fill="rgba(255,255,255,0.2)"
+                  fill="rgba(255,255,255,0.25)"
                   fontSize="8"
                   letterSpacing="3"
                   fontFamily="monospace"
+                  fontWeight="bold"
                 >
                   KM/H
                 </text>
               </svg>
             </motion.div>
 
-            {/* barra de progresso + percentual */}
+            {/* Barra de progresso com percentual (mantida do original) */}
             <motion.div
               className="loading-bar-wrapper"
               initial={{ opacity: 0 }}
@@ -242,7 +277,7 @@ const LoadingScreen = ({ onComplete }) => {
                 <motion.div
                   className="loading-bar-fill"
                   animate={{ width: `${percent}%`, background: color }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
                 />
               </div>
               <span className="loading-bar-pct" style={{ color }}>
@@ -250,12 +285,13 @@ const LoadingScreen = ({ onComplete }) => {
               </span>
             </motion.div>
 
-            {/* status */}
+            {/* Status textual com troca suave */}
             <motion.p
               className="loading-status"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              key={Math.floor(percent / 30)}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
             >
               {percent < 40
                 ? 'Iniciando sistema...'
@@ -265,7 +301,6 @@ const LoadingScreen = ({ onComplete }) => {
                 ? 'Quase lá...'
                 : 'Pronto!'}
             </motion.p>
-
           </div>
         </motion.div>
       )}

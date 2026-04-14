@@ -6,7 +6,7 @@ export const cars = [
     year: "2024",
     description: "A definição de confiabilidade e elegância sóbria. O sedã que conquistou o Brasil pelo conforto e valor de revenda.",
     color: "#c8a96e",
-    image: "/imagens/corolla.png",
+    image: "/imagens/corolla.webp",
     video: "/videoscarros/videocorolla.mp4",
     manutencao: {
       nivel: "medio",
@@ -49,7 +49,7 @@ export const cars = [
     year: "2023",
     description: "Conectividade e design moderno em um hatchback que redefiniu o mercado. O equilíbrio entre tecnologia e economia.",
     color: "#0072ff",
-    image: "/imagens/onix.png",
+    image: "/imagens/onix.webp",
     video: "/videoscarros/videoonix.mp4",
     manutencao: {
       nivel: "baixo",
@@ -90,9 +90,9 @@ export const cars = [
     name: "Celta",
     brand: "Chevrolet",
     year: "2012",
-    description: "O ícone das ruas brasileiras. Ágil, econômico e com uma manutenção que cabe no bolso. Um clássico da eficiência urbana.",
+    description: "O ícone das ruas brasileiras. Ágil, econômico e com uma manutenção que cabe no bolso.",
     color: "#ff3a3a",
-    image: "/imagens/celta.png",
+    image: "/imagens/celta.webp",
     video: null,
     manutencao: {
       nivel: "baixo",

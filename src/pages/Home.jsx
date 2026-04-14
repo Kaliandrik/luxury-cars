@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { cars } from '../data/cars'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -13,19 +14,17 @@ const isSlowConnection = () => {
 
 const Home = () => {
   const [index, setIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [videoVisible, setVideoVisible] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const videoRef = useRef(null)
   const activeCar = cars[index]
   const hasVideo = !!activeCar.video
-
-  // Só bloqueia em conexão muito ruim (2G) — mobile agora recebe vídeo
   const shouldPlayVideo = hasVideo && !isSlowConnection()
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
-
     setVideoVisible(false)
     setVideoLoaded(false)
 
@@ -35,29 +34,34 @@ const Home = () => {
       return
     }
 
-    // Carrega o vídeo com um pequeno delay pra não competir
-    // com o render inicial da página
     const loadTimer = setTimeout(() => {
       video.src = activeCar.video
       video.load()
-
       const onCanPlay = () => {
         setVideoLoaded(true)
         video.play().catch(() => {})
-        // Fade in suave só depois de estar pronto
         setTimeout(() => setVideoVisible(true), 100)
       }
-
       video.addEventListener('canplay', onCanPlay, { once: true })
     }, 300)
 
-    return () => {
-      clearTimeout(loadTimer)
-    }
+    return () => clearTimeout(loadTimer)
   }, [index, shouldPlayVideo])
 
-  const nextCar = () => setIndex((p) => (p === cars.length - 1 ? 0 : p + 1))
-  const prevCar = () => setIndex((p) => (p === 0 ? cars.length - 1 : p - 1))
+  const nextCar = () => {
+    setDirection(1)
+    setIndex((p) => (p === cars.length - 1 ? 0 : p + 1))
+  }
+
+  const prevCar = () => {
+    setDirection(-1)
+    setIndex((p) => (p === 0 ? cars.length - 1 : p - 1))
+  }
+
+  const goTo = (i) => {
+    setDirection(i > index ? 1 : -1)
+    setIndex(i)
+  }
 
   const showStaticBg = !shouldPlayVideo || !videoLoaded
 
@@ -66,20 +70,14 @@ const Home = () => {
       <Header />
 
       <div className="stage">
-
-        {/* Vídeo */}
         <video
           ref={videoRef}
-          loop
-          muted
-          playsInline
-          preload="none"          /* não baixa nada até o useEffect pedir */
+          loop muted playsInline preload="none"
           className="bg-video"
           style={{ opacity: videoVisible ? 1 : 0 }}
         />
 
-        {/* Fundo estático — aparece enquanto o vídeo carrega
-            e permanece em conexões 2G ou carros sem vídeo */}
+        {/* Fundo estático */}
         <div
           className="no-video-bg"
           style={{
@@ -108,28 +106,65 @@ const Home = () => {
           }}
         />
 
-        <button className="nav-btn left" onClick={prevCar} aria-label="Anterior">
+        {/* Seta esquerda com animação de hover */}
+        <motion.button
+          className="nav-btn left"
+          onClick={prevCar}
+          aria-label="Anterior"
+          whileHover={{ scale: 1.15, x: -3 }}
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        >
           <ChevronLeft size={22} strokeWidth={1.5} />
-        </button>
+        </motion.button>
 
-        <CarDisplay activeCar={activeCar} />
+        <CarDisplay activeCar={activeCar} direction={direction} />
 
-        <button className="nav-btn right" onClick={nextCar} aria-label="Próximo">
+        {/* Seta direita */}
+        <motion.button
+          className="nav-btn right"
+          onClick={nextCar}
+          aria-label="Próximo"
+          whileHover={{ scale: 1.15, x: 3 }}
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        >
           <ChevronRight size={22} strokeWidth={1.5} />
-        </button>
+        </motion.button>
 
+        {/* Dots */}
         <div className="dots">
-          {cars.map((_, i) => (
-            <button
+          {cars.map((car, i) => (
+            <motion.button
               key={i}
               className="dot"
-              onClick={() => setIndex(i)}
+              onClick={() => goTo(i)}
               style={{
                 width: i === index ? '32px' : '8px',
                 backgroundColor: i === index ? activeCar.color : 'rgba(255,255,255,0.2)',
               }}
+              whileHover={{ scaleY: 2 }}
               aria-label={`Ir para ${cars[i].name}`}
             />
+          ))}
+        </div>
+
+        {/* Miniaturas dos outros carros (canto inferior) */}
+        <div className="car-thumbnails">
+          {cars.map((car, i) => (
+            <motion.button
+              key={car.id}
+              className={`car-thumb ${i === index ? 'car-thumb--active' : ''}`}
+              style={{ '--car-color': car.color }}
+              onClick={() => goTo(i)}
+              whileHover={{ y: -4, scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <img src={car.image} alt={car.name} />
+              <span style={{ color: i === index ? car.color : 'rgba(255,255,255,0.35)' }}>
+                {car.name}
+              </span>
+            </motion.button>
           ))}
         </div>
       </div>
