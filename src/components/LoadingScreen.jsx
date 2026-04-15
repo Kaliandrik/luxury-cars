@@ -7,14 +7,15 @@ const LoadingScreen = ({ onComplete }) => {
   const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
+    // Steps ajustados para duração total de ~5 segundos
     const steps = [
       { delay: 0,    spd: 0,   pct: 0   },
-      { delay: 200,  spd: 40,  pct: 15  },
-      { delay: 600,  spd: 80,  pct: 35  },
-      { delay: 1000, spd: 130, pct: 58  },
-      { delay: 1500, spd: 170, pct: 75  },
-      { delay: 2000, spd: 220, pct: 90  },
-      { delay: 2500, spd: 240, pct: 100 },
+      { delay: 400,  spd: 40,  pct: 15  },
+      { delay: 1100, spd: 80,  pct: 35  },
+      { delay: 1800, spd: 130, pct: 58  },
+      { delay: 2600, spd: 170, pct: 75  },
+      { delay: 3500, spd: 220, pct: 90  },
+      { delay: 4500, spd: 240, pct: 100 },
     ]
 
     const timers = steps.map(({ delay, spd, pct }) =>
@@ -24,10 +25,11 @@ const LoadingScreen = ({ onComplete }) => {
       }, delay)
     )
 
+    // Sai após 5 segundos (antes 3000)
     const exitTimer = setTimeout(() => {
       setLeaving(true)
       setTimeout(onComplete, 600)
-    }, 3000)
+    }, 5000)
 
     return () => {
       timers.forEach(clearTimeout)
@@ -92,10 +94,7 @@ const LoadingScreen = ({ onComplete }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
         >
-          {/* Grade de fundo (já existe no CSS) */}
           <div className="loading-grid" />
-
-          {/* Luz radial que acompanha a cor do velocímetro */}
           <div
             className="loading-glow"
             style={{
@@ -103,8 +102,6 @@ const LoadingScreen = ({ onComplete }) => {
               transition: 'background 0.5s ease'
             }}
           />
-
-          {/* Cantos decorativos animados (novos) */}
           <div className="loading-corners">
             {['tl', 'tr', 'bl', 'br'].map((pos, i) => (
               <motion.div
@@ -118,7 +115,6 @@ const LoadingScreen = ({ onComplete }) => {
           </div>
 
           <div className="loading-content">
-            {/* Título com gradiente */}
             <motion.div
               className="loading-brand"
               initial={{ opacity: 0, y: -12 }}
@@ -128,7 +124,6 @@ const LoadingScreen = ({ onComplete }) => {
               <span className="loading-brand-tag">Carros Populares Brasil</span>
             </motion.div>
 
-            {/* Velocímetro SVG (igual ao original, mas com pequenos toques visuais) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -139,7 +134,6 @@ const LoadingScreen = ({ onComplete }) => {
                 className="loading-speedo"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                {/* Sombra suave no arco base */}
                 <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
                   <feMerge>
@@ -148,7 +142,6 @@ const LoadingScreen = ({ onComplete }) => {
                   </feMerge>
                 </filter>
 
-                {/* Arco base (fundo) */}
                 <path
                   d={`M ${arcStart.x} ${arcStart.y} A ${r} ${r} 0 1 1 ${arcEnd.x} ${arcEnd.y}`}
                   fill="none"
@@ -157,7 +150,6 @@ const LoadingScreen = ({ onComplete }) => {
                   strokeLinecap="round"
                 />
 
-                {/* Arco de progresso colorido com glow */}
                 <motion.path
                   d={`M ${arcStart.x} ${arcStart.y} A ${r} ${r} 0 ${largeArc} 1 ${progEnd.x} ${progEnd.y}`}
                   fill="none"
@@ -167,7 +159,6 @@ const LoadingScreen = ({ onComplete }) => {
                   style={{ filter: `url(#glow)`, transition: 'stroke 0.5s ease' }}
                 />
 
-                {/* Marcações */}
                 {ticks.map((t, i) => (
                   <line
                     key={i}
@@ -180,7 +171,6 @@ const LoadingScreen = ({ onComplete }) => {
                   />
                 ))}
 
-                {/* Números das marcações principais */}
                 {ticks.filter(t => t.major).map((t, i) => {
                   const labelR = r - 30
                   const rad = toRad(t.angle - 90)
@@ -201,13 +191,11 @@ const LoadingScreen = ({ onComplete }) => {
                   )
                 })}
 
-                {/* Ponteiro com animação spring */}
                 <motion.g
                   style={{ transformOrigin: `${cx}px ${cy}px` }}
                   animate={{ rotate: needleAngle }}
                   transition={{ type: 'spring', stiffness: 70, damping: 18 }}
                 >
-                  {/* Sombra do ponteiro */}
                   <line
                     x1={cx} y1={cy + 14}
                     x2={cx} y2={cy - r + 22}
@@ -215,7 +203,6 @@ const LoadingScreen = ({ onComplete }) => {
                     strokeWidth="5"
                     strokeLinecap="round"
                   />
-                  {/* Ponteiro principal com glow */}
                   <line
                     x1={cx} y1={cy + 14}
                     x2={cx} y2={cy - r + 22}
@@ -224,16 +211,13 @@ const LoadingScreen = ({ onComplete }) => {
                     strokeLinecap="round"
                     style={{ filter: `drop-shadow(0 0 4px ${color})`, transition: 'stroke 0.5s ease' }}
                   />
-                  {/* Detalhe ponta do ponteiro */}
                   <circle cx={cx} cy={cy - r + 22} r="2.5" fill="#fff" opacity="0.7" />
                 </motion.g>
 
-                {/* Centro do ponteiro (camadas) */}
                 <circle cx={cx} cy={cy} r="10" fill="#0a0a0a" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
                 <circle cx={cx} cy={cy} r="6" fill="#111" stroke={`${color}66`} strokeWidth="1" />
                 <circle cx={cx} cy={cy} r="3" fill={color} style={{ filter: `drop-shadow(0 0 6px ${color})` }} />
 
-                {/* Velocidade digital com leve pulsação */}
                 <text
                   x={cx} y={cy + 38}
                   textAnchor="middle"
@@ -251,7 +235,6 @@ const LoadingScreen = ({ onComplete }) => {
                   </motion.tspan>
                 </text>
 
-                {/* Label KM/H */}
                 <text
                   x={cx} y={cy + 52}
                   textAnchor="middle"
@@ -266,7 +249,6 @@ const LoadingScreen = ({ onComplete }) => {
               </svg>
             </motion.div>
 
-            {/* Barra de progresso com percentual (mantida do original) */}
             <motion.div
               className="loading-bar-wrapper"
               initial={{ opacity: 0 }}
@@ -285,7 +267,6 @@ const LoadingScreen = ({ onComplete }) => {
               </span>
             </motion.div>
 
-            {/* Status textual com troca suave */}
             <motion.p
               className="loading-status"
               key={Math.floor(percent / 30)}

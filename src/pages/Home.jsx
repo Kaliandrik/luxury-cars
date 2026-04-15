@@ -6,6 +6,13 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import CarDisplay from '../components/CarDisplay'
 
+// Detecta se é dispositivo móvel (pela largura da tela)
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false
+  return window.innerWidth <= 768
+}
+
+// Detecta conexão lenta
 const isSlowConnection = () => {
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection
   if (!conn) return false
@@ -20,20 +27,26 @@ const Home = () => {
   const videoRef = useRef(null)
   const activeCar = cars[index]
   const hasVideo = !!activeCar.video
-  const shouldPlayVideo = hasVideo && !isSlowConnection()
+
+  // Em mobile: NUNCA reproduz vídeo (força fundo estático)
+  const shouldPlayVideo = !isMobileDevice() && hasVideo && !isSlowConnection()
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
+
+    // Reseta estados ao trocar de carro
     setVideoVisible(false)
     setVideoLoaded(false)
 
     if (!shouldPlayVideo) {
+      // Limpa qualquer fonte de vídeo e recarrega (importante para liberar recursos)
       video.src = ''
       video.load()
       return
     }
 
+    // Carrega o vídeo somente se for permitido (desktop e conexão boa)
     const loadTimer = setTimeout(() => {
       video.src = activeCar.video
       video.load()
@@ -45,8 +58,11 @@ const Home = () => {
       video.addEventListener('canplay', onCanPlay, { once: true })
     }, 300)
 
-    return () => clearTimeout(loadTimer)
-  }, [index, shouldPlayVideo])
+    return () => {
+      clearTimeout(loadTimer)
+      video.removeEventListener('canplay', () => {})
+    }
+  }, [index, shouldPlayVideo, activeCar.video])
 
   const nextCar = () => {
     setDirection(1)
@@ -70,14 +86,18 @@ const Home = () => {
       <Header />
 
       <div className="stage">
+        {/* Vídeo (só aparece em desktop e se carregado) */}
         <video
           ref={videoRef}
-          loop muted playsInline preload="none"
+          loop
+          muted
+          playsInline
+          preload="none"
           className="bg-video"
           style={{ opacity: videoVisible ? 1 : 0 }}
         />
 
-        {/* Fundo estático */}
+        {/* Fundo estático com gradiente da cor do carro */}
         <div
           className="no-video-bg"
           style={{
@@ -95,6 +115,7 @@ const Home = () => {
           style={{ opacity: showStaticBg ? 1 : 0, transition: 'opacity 0.8s ease' }}
         />
 
+        {/* Overlays para profundidade */}
         <div className="overlay-radial" />
         <div className="overlay-top" />
         <div className="overlay-bottom" />
@@ -106,7 +127,7 @@ const Home = () => {
           }}
         />
 
-        {/* Seta esquerda com animação de hover */}
+        {/* Setas de navegação */}
         <motion.button
           className="nav-btn left"
           onClick={prevCar}
@@ -120,7 +141,6 @@ const Home = () => {
 
         <CarDisplay activeCar={activeCar} direction={direction} />
 
-        {/* Seta direita */}
         <motion.button
           className="nav-btn right"
           onClick={nextCar}
@@ -132,7 +152,7 @@ const Home = () => {
           <ChevronRight size={22} strokeWidth={1.5} />
         </motion.button>
 
-        {/* Dots */}
+        {/* Dots indicadores */}
         <div className="dots">
           {cars.map((car, i) => (
             <motion.button
@@ -149,7 +169,7 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Miniaturas dos outros carros (canto inferior) */}
+        {/* Miniaturas dos carros (escondidas em mobile por CSS) */}
         <div className="car-thumbnails">
           {cars.map((car, i) => (
             <motion.button
